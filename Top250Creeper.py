@@ -13,10 +13,13 @@ for i in range(0, 250, 25):
         content = response.text
         soup = BeautifulSoup(content, "html.parser")
         titles = soup.findAll("span", {"class": "title"})
-        for title in titles:
-            if '/' not in title.string:
-                num += 1
-                print("电影号{}: ".format(num),title.string)
+        with open("./test.txt", "a+", encoding="utf-8") as f:        
+            for title in titles:
+                if '/' not in title.string:
+                    num += 1
+                    # print("电影号{}: ".format(num),title.string)
+                    txt = "电影号{}: ".format(num) + title.string
+                    f.write(txt)
     else:
         print('the method of get Failed!/n')
 
