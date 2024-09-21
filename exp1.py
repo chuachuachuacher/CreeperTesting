@@ -14,20 +14,31 @@ MyHeader = {
     "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) Gecko/20100101 Firefox/130.0"
 }
 
+#判断l_pager pager_theme_4 pb_list_pager
+response = requests.get("https://tieba.baidu.com/p/9109361647", headers=MyHeader)
+response.encoding = 'utf-8'
 
-for i in range(5): #手动调
+if response.ok:
+    Soup = BeautifulSoup(response.text, "html.parser")
+    pages = Soup.find("ul", attrs={"class":"l_posts_num"}).find("li", attrs={"class":"l_pager pager_theme_4 pb_list_pager"}).find_all("a")
+    pageNum = 0
+    for page in pages:
+        if page.get_text() != "下一页":
+            pageNum = int(page.get_text())
+    # print("总页数：", pageNum)
+
+
+for i in range(pageNum): #手动调 XXXXX 自动调
     MyResponse = requests.get('https://tieba.baidu.com/p/9109361647?pn={}'.format(i+1), headers=MyHeader)
     MyResponse.encoding = 'utf-8'
     if MyResponse.ok:
         print("______请求成功______\n")
         with open("./test_ex{}.html".format(i+1), "w", encoding="utf-8") as f:
             f.write(MyResponse.text)        
-    else:
-        print("______网页欺骗失败______\n")
-    MyResponse.close()
+        
 
 FloorNum = 1
-for i in range(5): # 手动
+for i in range(pageNum): # 手动
     with open("./page_{}.html".format(i+1), "r", encoding="utf-8") as f:
         MyContent = f.read()
         Soup = BeautifulSoup(MyContent, "html.parser")
