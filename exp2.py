@@ -18,6 +18,29 @@ def main():
     NovelUrl = setNovel()
     ChapterList = getNovelInfo(NovelUrl)
     getChapterContent(ChapterList)
+    TxtToMarkdown('./creeper/Output.txt', './creeper/output.md')
+
+
+# 转 markdown
+def TxtToMarkdown(input_file, output_file):  
+    with open(input_file, 'r', encoding='utf-8') as infile:  
+        lines = infile.readlines()  
+    markdown_content = []  
+    if lines:  
+        markdown_content.append('# ' + lines[0].strip())  
+        lines = lines[1:]
+    in_list = False  
+    for line in lines:  
+        stripped_line = line.strip()  
+        if stripped_line.startswith('- '):  
+            markdown_content.append(stripped_line[2:] + '\n')  
+            in_list = True  
+        elif in_list and not stripped_line.startswith('- '):  
+            in_list = False  
+        else:  
+            markdown_content.append(line)  
+    with open(output_file, 'w', encoding='utf-8') as outfile:  
+        outfile.writelines(markdown_content) 
 
 # 获取内容
 def getChapterContent(clist):
@@ -74,7 +97,7 @@ def getChapterContent(clist):
                             text = content.getText().strip()
                             with open("./creeper/Output.txt", 'a+', encoding='UTF-8') as f:
                                 f.write(text)
-                print("\n章节内容已写入文件：Output.txt")
+                print("\n章节内容已写入文件：Output.md")
         else:
             print("章节编号超出范围！")
 
